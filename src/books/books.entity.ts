@@ -4,7 +4,10 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
+import { Category } from '../category/category.entity';
 
 @Entity('books')
 export class Books {
@@ -21,12 +24,16 @@ export class Books {
   author: string;
 
   @Column()
-  category: string;
+  category_id: number;
+
+  @ManyToOne(() => Category)
+  @JoinColumn({ name: 'category_id' })
+  category: Category;
 
   @Column()
   image_url: string;
 
-  @Column()
+  @Column({ default: false })
   isFavorite: boolean;
 
   @CreateDateColumn()

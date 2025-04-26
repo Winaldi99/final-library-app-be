@@ -10,6 +10,8 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { PostModule } from './post/post.module';
 import { BooksModule } from './books/books.module';
+import { CategoryModule } from './category/category.module';
+import { ReviewModule } from './review/review.module';
 
 @Module({
   imports: [
@@ -35,7 +37,9 @@ import { BooksModule } from './books/books.module';
     AuthModule,
     UserModule,
     PostModule,
-    BooksModule
+    BooksModule,
+    CategoryModule,
+    ReviewModule,
   ],
   controllers: [AppController],
   providers: [

@@ -1,22 +1,14 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty, IsNumber, IsString } from "class-validator";
 
-export class CreateBooksDTO {
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty()
-  title: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty()
-  author: string;
-
+export class CreateReviewDTO {
   @IsNumber()
   @IsNotEmpty()
   @ApiProperty()
-  categoryId: number;
+  bookId: number;
 
+  @IsString()
+  @IsNotEmpty()
   @ApiProperty()
-  imageUrl: string;
+  ulasan: string;
 }

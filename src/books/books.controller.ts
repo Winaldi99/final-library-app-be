@@ -15,20 +15,32 @@ import { CreateBooksDTO } from './create-books.dto';
 import { BooksService } from './books.service';
 import { Books } from './books.entity';
 import { ApiParam, ApiQuery } from '@nestjs/swagger';
+import { CategoryService } from '../category/category.service';
 
-@Controller('post')
+@Controller('books')
 export class BooksController {
-  constructor(private readonly booksService: BooksService) {}
+  constructor(
+    private readonly booksService: BooksService,
+    private readonly categoryService: CategoryService,
+  ) {}
+  
   @Post()
-  async create(@Req() request: Request, @Body() createPostDTO: CreateBooksDTO) {
-    const posts: Books = new Books();
+  async create(@Req() request: Request, @Body() createBooksDTO: CreateBooksDTO) {
+    const book: Books = new Books();
     const userJwtPayload: JwtPayloadDto = request['user'];
-    posts.title = createPostDTO.title;
-    posts.author = createPostDTO.author;
-    posts.category = createPostDTO.category;
-    posts.image_url = createPostDTO.imageUrl;
-    posts.user_id = userJwtPayload.sub;
-    await this.booksService.save(posts);
+    
+    // Verify that the category exists
+    const category = await this.categoryService.findById(createBooksDTO.categoryId);
+    if (!category) {
+      throw new NotFoundException('Category not found');
+    }
+    
+    book.title = createBooksDTO.title;
+    book.author = createBooksDTO.author;
+    book.category_id = createBooksDTO.categoryId;
+    book.image_url = createBooksDTO.imageUrl;
+    book.user_id = userJwtPayload.sub;
+    await this.booksService.save(book);
   }
 
   @Get()
@@ -44,7 +56,7 @@ export class BooksController {
   }
 
   @Get(':id')
-  @ApiParam({ name: 'id', type: Number, description: 'ID of the post' })
+  @ApiParam({ name: 'id', type: Number, description: 'ID of the book' })
   async findOne(
     @Req() request: Request,
     @Param('id') id: number,
@@ -54,36 +66,43 @@ export class BooksController {
   }
 
   @Put(':id')
-  @ApiParam({ name: 'id', type: Number, description: 'ID of the post' })
+  @ApiParam({ name: 'id', type: Number, description: 'ID of the book' })
   async updateOne(
     @Req() request: Request,
     @Param('id') id: number,
-    @Body() createPostDTO: CreateBooksDTO,
+    @Body() createBooksDTO: CreateBooksDTO,
   ) {
     const userJwtPayload: JwtPayloadDto = request['user'];
-    const post: Books = await this.booksService.findByUserIdAndPostId(
+    const book: Books = await this.booksService.findByUserIdAndPostId(
       userJwtPayload.sub,
       id,
     );
-    if (post.id == null) {
+    if (book.id == null) {
       throw new NotFoundException();
     }
-    post.title = createPostDTO.title;
-    post.author = createPostDTO.author;
-    post.category = createPostDTO.category;
-    post.image_url = createPostDTO.imageUrl;
-    await this.booksService.save(post);
+    
+    // Verify that the category exists
+    const category = await this.categoryService.findById(createBooksDTO.categoryId);
+    if (!category) {
+      throw new NotFoundException('Category not found');
+    }
+    
+    book.title = createBooksDTO.title;
+    book.author = createBooksDTO.author;
+    book.category_id = createBooksDTO.categoryId;
+    book.image_url = createBooksDTO.imageUrl;
+    await this.booksService.save(book);
   }
 
   @Delete(':id')
-  @ApiParam({ name: 'id', type: Number, description: 'ID of the post' })
+  @ApiParam({ name: 'id', type: Number, description: 'ID of the book' })
   async deleteOne(@Req() request: Request, @Param('id') id: number) {
     const userJwtPayload: JwtPayloadDto = request['user'];
-    const post: Books = await this.booksService.findByUserIdAndPostId(
+    const book: Books = await this.booksService.findByUserIdAndPostId(
       userJwtPayload.sub,
       id,
     );
-    if (post.id == null) {
+    if (book.id == null) {
       throw new NotFoundException();
     }
     await this.booksService.deleteById(id);
