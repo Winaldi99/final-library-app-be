@@ -11,7 +11,6 @@ export class CreateBooksTable1745556787896 implements MigrationInterface {
                 author TEXT,
                 category_id INTEGER,
                 image_url TEXT,
-                isFavorite BOOLEAN DEFAULT false,
                 created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   

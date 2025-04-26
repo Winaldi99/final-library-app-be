@@ -33,9 +33,6 @@ export class Books {
   @Column()
   image_url: string;
 
-  @Column({ default: false })
-  isFavorite: boolean;
-
   @CreateDateColumn()
   created_at: Date;
 
